@@ -1,0 +1,183 @@
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>
+        js调用java
+    </title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+<p>
+    <xmp id="show">
+    </xmp>
+</p>
+<p>
+    <xmp id="init">
+    </xmp>
+</p>
+
+<p>
+    <input type="button" id="enter" value="测试h5 controller的action" onclick="testClick();"
+    />
+</p>
+<p>
+    <input type="button" id="button1" value="测试" onclick="testSave();"
+    />
+</p>
+
+</body>
+<script>
+
+    if (window.WebViewJavascriptBridge) {
+        //do your work here
+        WebViewJavascriptBridge.registerHandler("achievePostOrderSuccess", function (data, responseCallback) {
+            alert(data)
+            var responseData = "Javascript Says Right back aka!";
+            responseCallback(responseData);
+        });
+           WebViewJavascriptBridge.registerHandler("achieveAreaInfo", function(data, responseCallback) {
+        var responseData = "Javascript send app response back info here!";
+          alert(data)
+        responseCallback(responseData);
+    });
+    } else {
+        document.addEventListener(
+            'WebViewJavascriptBridgeReady'
+            , function () {
+                //do your work here
+                WebViewJavascriptBridge.registerHandler("achievePostOrderSuccess", function (data, responseCallback) {
+                    alert(data)
+                    var responseData = "Javascript Says Right back aka!";
+                    responseCallback(responseData);
+                });
+
+                   WebViewJavascriptBridge.registerHandler("achieveAreaInfo", function(data, responseCallback) {
+                 var responseData = "Javascript send app response back info here!";
+                   alert(data)
+                    responseCallback(responseData);
+                 });
+
+            },
+            false
+        );
+    }
+
+
+    function testDiv() {
+        window.WebViewJavascriptBridge.callHandler(
+            'jumpCustomersList'
+            , {'param': '中文测试'}
+            , function (responseData) {
+                alert(responseData)
+            }
+        );
+    }
+
+    function testClick() {
+        window.WebViewJavascriptBridge.callHandler(
+            'executeHandleControllerAction'
+            , {'param': '中文测试'}
+            , function (responseData) {
+            }
+        );
+    }
+
+    function testClick1() {
+        window.WebViewJavascriptBridge.callHandler(
+            'jumpPostNewOrder'
+            , {'param': '中文测试'}
+            , function (responseData) {
+                alert(responseData)
+            }
+        );
+    }
+
+    function testClick2() {
+        window.WebViewJavascriptBridge.callHandler(
+            'achieveToken'
+            , {'param': '中文测试'}
+            , function (responseData) {
+                alert(responseData)
+            }
+        );
+    }
+
+    function bridgeLog(logContent) {
+        document.getElementById("show").innerHTML = logContent;
+    }
+
+    function connectWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) {
+            callback(WebViewJavascriptBridge)
+        } else {
+            document.addEventListener(
+                'WebViewJavascriptBridgeReady'
+                , function () {
+                    callback(WebViewJavascriptBridge)
+                },
+                false
+            );
+        }
+    }
+
+    connectWebViewJavascriptBridge(function (bridge) {
+        bridge.init(function (message, responseCallback) {
+            console.log('JS got a message', message);
+            var data = {
+                'Javascript Responds': '测试中文!'
+            };
+            console.log('JS responding with', data);
+            responseCallback(data);
+        });
+
+
+        //  functionInJs  为对象名,
+        bridge.registerHandler("functionInJs", function (data, responseCallback) {
+            document.getElementById("show").innerHTML = ("data from Java: = " + data);
+            var responseData = "Javascript Says Right back aka!";
+            responseCallback(responseData);
+        });
+    })
+
+
+    function testSave() {
+
+        window.WebViewJavascriptBridge.callHandler(
+            'achieveUserInformation'
+            , {'param': '中文测试'}
+            , function (responseData) {
+                alert(responseData)
+            }
+        );
+
+        var data = {"data": 32243};
+        <!--var str =  JSON.stringify(data.data) ;-->
+        <!--alert(str) ;-->
+        sessionStorage.setItem("data", data.data);
+    }
+
+    function testGet() {
+
+        window.WebViewJavascriptBridge.callHandler(
+            'achieveToken'
+            , {'param': '中文测试'}
+            , function (responseData) {
+                var res = JSON.parse(responseData);
+                alert(res);
+                alert(JSON.stringify(res));
+                alert(res.userName);
+                alert(JSON.stringify(res.authStatus));
+
+            }
+        );
+    }
+
+
+
+
+
+</script>
+
+</html>
